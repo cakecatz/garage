@@ -1,0 +1,109 @@
+<% include header %>
+	
+	<% include nav %>
+
+	<div id="vm-list" class="col-md-3">
+		<h6 style="text-align: center;">VirtualMachine List</h6>
+		<div id="machine-panels">
+		<% for (var i = 0;i < vm.length;i++){ %>
+			<div class="panel panel-<% if (vm[i][3]==='running') { %><%= 'success' %><%} else {%><%= 'default' %><%} %> panel-mouseover" id="vm-<%= vm[i][0] %>">
+				<div class="panel-heading">
+			    <h3 class="panel-title"><%= vm[i][1] %> [ <%= vm[i][0] %> ] <%= vm[i][3] %></h3>
+			  </div>
+		  	<div class="panel-body">
+		  		<p>
+			  		<button class="btn btn-inverse">Provision</button>
+			  		<button class="btn btn-inverse">Reload</button>
+			  		<button class="btn btn-inverse">Halt</button>
+		  		</p>
+		  		<p>
+		  			<button class="btn btn-danger" data-toggle="modal" data-target="#destroy-modal">Destroy</button>
+		  		</p>
+			  </div>
+			</div>
+		<% } %>
+		<% if (vm.length === 0) { %>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					No Virtual Machines
+				</div>
+			</div>
+		<% } %>
+		</div>
+		<h6 style="text-align: center;">Vagrantfile List</h6>
+		<% for (var i =0;i < garage_data.length;i++) { %> 
+			<div class="panel panel-default panel-mouseover" id="vagrantfile-panels">
+				<div class="panel-body machine-detail">
+					<p>Name : <%= garage_data[i].name %></p>
+					<p>Box : <%= garage_data[i].box %></p>
+					<p>memory : <%= garage_data[i].memory %> MB</p>
+					<p>
+						<button class="btn btn-inverse vagrant-up-btn">Vagrant up
+							<input type="hidden" class="vagrantfile-data-index" value="<%= i %>">
+						</button>
+						<button class="btn btn-default">Delete</button>
+					</p>
+				</div>
+			</div>
+		<% } %>
+		<% if (garage_data.length === 0) { %>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					No Vagrantfiles
+				</div>
+			</div>
+		<% } %>
+	</div>
+
+	<script>
+	garage.vms = [
+		<% for (var i = 0;i < vm.length;i++){ %>
+		{
+			id:"<%= vm[i][0] %>",
+			name:"<%= vm[i][1] %>",
+			provider:"<%= vm[i][2] %>",
+			state:"<%= vm[i][3] %>",
+			directory:"<%= vm[i][4] %>"
+		},
+		<% } %>
+	];
+	garage.files = [
+		<% for (var i=0;i<garage_data.length;i++) { %>
+		{
+			name:"<%= garage_data[i].name %>",
+			box:"<%= garage_data[i].box %>",
+			memory:"<%= garage_data[i].memory %>",
+			uuid:"<%= garage_data[i].uuid %>",
+			path:"<%= garage_data[i].path %>"
+		},
+		<% } %>
+	];
+	</script>
+
+	<div id="vm-detail" class="col-md-9">
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		  	<p class="">ID : <span class="vm-detail-ID"></span></p>
+		    Virtual Machine Detail
+		  </div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="destroy-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">Destroy this machine?</h4>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-danger destroy-vm-btn" data-dismiss="modal">Destroy</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<input type="hidden" value="<%= vm.length %>" name="vm-number">
+<% include footer %>

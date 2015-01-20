@@ -1,0 +1,48 @@
+<% include header %>
+	
+	<% include nav %>
+
+	<div class="col-md-offset-3 col-md-6">
+		<h4>Create New VM</h4>
+		<div class="form-group">
+		  <label for="form-vm-name">Machine Name</label>
+		  <input class="form-control" placeholder="default" type="text" id="form-vm-name" />
+		</div>
+	  <select class="form-control select select-inverse select-block mbl">
+		  <optgroup label="Added">
+		  	<% for (var i = 0; i < boxes.length; i++) { %>
+		    <option value="<%= i %>"><%= boxes[i].name %></option>
+		    <% } %>
+		  </optgroup>
+		  <optgroup label="Recommend">
+		  	<% var recommend_length = 3 + i; %>
+		    <% for (;i < recommend_length;i++) { %>
+		    	<option value="<%= i %>">test</option>
+		    <% } %>
+		  </optgroup>
+		</select>
+
+		<div class="form-group">
+			<label for="slider">Machine Memory Size</label>
+			<div id="slider"></div>
+			<input class="form-control" style="display:inline;width:100px;" value="512" type="text" id="form-vm-memory" /> MB
+		</div>
+
+
+		<div class="form-group">
+			<h6>Forwarded Port [VM_IP : HOST_IP]</h6>
+			<input name="tagsinput" class="tagsinput" data-role="tagsinput" value="80:8080" />
+		</div>
+
+		<div style="text-align: right;">
+			<button id="vagrant-up-btn" class="btn btn-embossed btn-primary">
+			  vagrant up
+			</button>
+			<button id="vagrantfile-save-btn" class="btn btn-default btn-embossed">
+			  save vagrantfile
+			</button>
+		</div>
+
+	</div>
+
+<% include footer %>

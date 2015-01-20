@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "<%= box %>"
+  <% for (var i=0;i < ports.length;i++) { %>
+  config.vm.network "forwarded_port", guest: <%= ports[i].split(':')[0] %>, host: <%= ports[i].split(':')[1] %>
+  <% } %>
+
+  # config.vm.synced_folder "./shared", "/var/www/html"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "<%= memory %>"
+    vb.name = "<%= name %>"
+  end
+
+  #config.vm.provision "shell", inline <<-SHELL
+  #  sudo apt-get install apache2
+  #SHELL
+end
