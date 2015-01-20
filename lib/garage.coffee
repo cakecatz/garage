@@ -35,4 +35,9 @@ module.exports = {
 			if v.uuid == uuid
 				return v
 		return false
+	load_setting_file: (path)->
+		file_body = fs.readFileSync path, {
+			encoding: "UTF-8"
+		}
+		return JSON.parse file_body
 }
