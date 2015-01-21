@@ -12,17 +12,35 @@ garage = {
 		return false;
 	},
 	reload: function() {
+		garage._reloadInnerVmList( garage._updateVmListView );
+	},
+	_updateVmListView: function() {
 		// TODO: use diff
 		var body = '';
-		for(var i = 0;i < this.vms.length;i++) {
-			body += this.create_machine_panel(this.vms[i]);
+		for(var i = 0;i < garage.vms.length;i++) {
+			body += garage.create_machine_panel(garage.vms[i]);
 		}
-		this._panel_rewrite(body);
+		if (body === '') {
+			body = '<div class="panel panel-default"><div class="panel-body">No Virtual Machines</div></div>';
+		}
+		garage._panel_rewrite(body);
+	},
+	_reloadInnerVmList: function(callback) {
+		this._order('/refresh', function(data){
+			garage._updateGarageData( JSON.parse(data) );
+		});
+		if (callback) {
+			callback();
+		}
+	},
+	_updateGarageData: function(data) {
+		garage.vfile = data.vfile;
+		garage.vms = garage._convertVmArr(data.vms);
 	},
 	create_machine_panel: function(vm_info) {
 		var body = '<div class="panel panel-' + this._vm_state_class(vm_info.state) + ' panel-mouseover" id="vm-'+vm_info.id+'"><div class="panel-heading">\
 			<h3 class="panel-title">' + vm_info.name + ' [ ' + vm_info.id + ' ] ' + vm_info.state + '</h3></div><div class="panel-body"><p>\
-			<button class="btn btn-inverse">Provision</button> <button class="btn btn-inverse">Reload</button> <button class="btn btn-warning">Halt</button>\
+			<button class="btn btn-inverse">Provision</button> <button class="btn btn-inverse">Reload</button> <button class="btn btn-inverse">Halt</button>\
 			</p><p><button class="btn btn-danger" data-toggle="modal" data-target="#destroy-modal">Destroy</button> </p></div></div>';
 		return body;
 	},
@@ -51,18 +69,13 @@ garage = {
 		garage.vms.splice(remove_index, i);
 	},
 	destroy: function(vm_id) {
-		garage._start_process();
-		garage._removing = vm_id;
-		$.get("/" + vm_id + "/destroy", function(data){
+		this._order("/" + vm_id + "/destroy", function(data){
 			if (data === 'failed') {
 				garage._push_alert("failed X(", 'error');
-				garage._removing = '';
 			} else {
 				garage._push_alert("Success :)");
-				garage._remove_vmdata( garage._removing );
 			}
 			garage.reload();
-			garage._stop_process();
 		});
 	},
 	_push_alert: function(message, type) {
@@ -78,11 +91,13 @@ garage = {
 		return parseInt( Math.random() * (999999 - 1) + 1 );
 	},
 	_removing: '',
-	_start_process: function() {
+	_startProcess: function() {
+		this.stopMonitoring();
 		$("#loading-icon").removeClass("stop-process");
 	},
-	_stop_process: function() {
+	_stopProcess: function() {
 		$("#loading-icon").addClass("stop-process");
+		this.startMonitoring();
 	},
 	_success_process: function() {
 		garage._push_alert("Success :)");
@@ -91,14 +106,18 @@ garage = {
 		garage._push_alert("failed X(", 'error');
 	},
 	up: function(v_file) {
-		garage._start_process();
-		$.get('/vagrantfile/' + v_file.uuid + '/up', function(data){
-			console.log (data);
-			garage._stop_process();
+		this._order('/vagrantfile/' + v_file.uuid + '/up', function(data){
+			garage.reload();
+		});
+	},
+	delete_vfile: function(v_file) {
+		this._order('/vagrantfile/' + v_file.uuid + '/delete', function(data){
+			console.log(data);
+			garage.reload();
 		});
 	},
 	new_vm: function() {
-		garage._start_process();
+		garage._startProcess();
 		vagrantfile = {};
 		var vm_name = $("#form-vm-name").val();
 		if (vm_name === "") vm_name = 'default';
@@ -111,12 +130,45 @@ garage = {
 		});
 
 		$.post('/vagrantfile', vagrantfile, function(data) {
-			garage._stop_process();
+			garage._stopProcess();
 			if ( data < 0 ) {
 				garage._failed_process();
 			} else {
 				garage._success_process();
 			}
 		});
-	}
+	},
+	_order: function(path, callback, post_data) {
+		garage._startProcess();
+		switch (path) {
+			case 'aa':
+				console.log(11);
+			default:
+				$.get(path, function(data){
+					callback(data);
+					garage._stopProcess();
+				});
+		}
+	},
+	_convertVmArr: function(arr) {
+		if (arr.length <= 0) return [];
+		var result = [];
+		for (var i=0;i<arr.length;i++) {
+			result.push({
+				id: arr[i][0],
+				name: arr[i][1],
+				provider: arr[i][2],
+				state: arr[i][3],
+				directory: arr[i][4]
+			});
+		}
+		return result;
+	},
+	startMonitoring: function() {
+		this._monitor = setInterval( garage.reload, 5000 );
+	},
+	stopMonitoring: function() {
+		clearInterval( this._monitor );
+	},
+	_monitor: {}
 };

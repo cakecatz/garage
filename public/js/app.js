@@ -20,8 +20,11 @@
 	});
 
 	$('.vagrant-up-btn').click(function(){
-		var selected_index = $(this).find('.vagrantfile-data-index').val();
-		garage.up( garage.files[selected_index] );
+		garage.up( garage.vfiles[ this.dataset.selectIndex ] );
+	});
+
+	$('.delete-vfile-btn').click(function(){
+		garage.delete_vfile( garage.vfiles[ this.dataset.selectIndex ] );
 	});
 
 	$(document).ready(function(){
@@ -42,4 +45,5 @@
 		  });
 		}
 	});
+	garage.startMonitoring();
 })();

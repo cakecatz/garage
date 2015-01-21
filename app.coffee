@@ -24,16 +24,20 @@ vagrant.init setting
 
 app.get '/', (req, res)->
 	vagrant.status (vms)->
-		garage_data = garage.status setting
+		vfile = garage.status setting
 		res.render 'index', {
 			title: setting.name
 			vm: vms
-			garage_data: garage_data.vms
+			vfile: vfile.vms
 		}
 
 app.get '/refresh', (req, res)->
 	vagrant.status (vms)->
-		res.send JSON.stringify vms
+		vfile = garage.status setting
+		res.send JSON.stringify {
+			vms: vms
+			vfile: vfile.vms
+		}
 
 app.get '/new', (req, res)->
 	vagrant.box_list (box_list)->
@@ -50,11 +54,9 @@ app.get '/vagrantfile/:uuid([0-9a-z\-]+)/:control([a-z]+)', (req, res)->
 	v_file = garage.find req.params.uuid, setting
 	switch req.params.control
 		when 'up'
-			vagrant.up v_file, (result)->
-				res.send result
+			vagrant.up v_file, res
 		when 'delete'
-			garage.deleteVfile v_file, (result)->
-				res.send result
+			garage.deleteVfile v_file, res
 		else
 			res.send '-2'
 

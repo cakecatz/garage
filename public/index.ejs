@@ -1,5 +1,5 @@
 <% include header %>
-	
+
 	<% include nav %>
 
 	<div id="vm-list" class="col-md-3">
@@ -31,22 +31,20 @@
 		<% } %>
 		</div>
 		<h6 style="text-align: center;">Vagrantfile List</h6>
-		<% for (var i =0;i < garage_data.length;i++) { %> 
+		<% for (var i =0;i < vfile.length;i++) { %>
 			<div class="panel panel-default panel-mouseover" id="vagrantfile-panels">
 				<div class="panel-body machine-detail">
-					<p>Name : <%= garage_data[i].name %></p>
-					<p>Box : <%= garage_data[i].box %></p>
-					<p>memory : <%= garage_data[i].memory %> MB</p>
+					<p>Name : <%= vfile[i].name %></p>
+					<p>Box : <%= vfile[i].box %></p>
+					<p>memory : <%= vfile[i].memory %> MB</p>
 					<p>
-						<button class="btn btn-inverse vagrant-up-btn">Vagrant up
-							<input type="hidden" class="vagrantfile-data-index" value="<%= i %>">
-						</button>
-						<button class="btn btn-default">Delete</button>
+						<button class="btn btn-inverse vagrant-up-btn" data-select-index="<%= i %>">Vagrant up</button>
+						<button class="btn btn-default delete-vfile-btn" data-select-index="<%= i %>">Delete</button>
 					</p>
 				</div>
 			</div>
 		<% } %>
-		<% if (garage_data.length === 0) { %>
+		<% if (vfile.length === 0) { %>
 			<div class="panel panel-default">
 				<div class="panel-body">
 					No Vagrantfiles
@@ -67,14 +65,14 @@
 		},
 		<% } %>
 	];
-	garage.files = [
-		<% for (var i=0;i<garage_data.length;i++) { %>
+	garage.vfiles = [
+		<% for (var i=0;i<vfile.length;i++) { %>
 		{
-			name:"<%= garage_data[i].name %>",
-			box:"<%= garage_data[i].box %>",
-			memory:"<%= garage_data[i].memory %>",
-			uuid:"<%= garage_data[i].uuid %>",
-			path:"<%= garage_data[i].path %>"
+			name:"<%= vfile[i].name %>",
+			box:"<%= vfile[i].box %>",
+			memory:"<%= vfile[i].memory %>",
+			uuid:"<%= vfile[i].uuid %>",
+			path:"<%= vfile[i].path %>"
 		},
 		<% } %>
 	];

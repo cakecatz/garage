@@ -7,7 +7,6 @@ uuid = require 'node-uuid'
 module.exports = {
 	vms: []
 	init: ()->
-
 		exec 'vagrant global-status', (err, stdout, stderr) =>
 			p.e err
 			vm_arr = this._parse_status stdout
@@ -19,9 +18,9 @@ module.exports = {
 					state: v[3]
 					dir: v[4]
 				}
-		
+
 	status: (callback)->
-		exec 'vagrant global-status', (err, stdout, stderr) =>
+		exec 'vagrant global-status --prune', (err, stdout, stderr) =>
 			p.e err
 			callback this._parse_status stdout
 
@@ -53,8 +52,9 @@ module.exports = {
 	destroy: (vm_id, callback)->
 		target = this.vm_search vm_id
 		if target
-			exec 'vagrant destroy -f ' + target.id, (err, stdout, stderr) ->
+			exec 'vagrant destroy -f ' + target.id, (err, stdout, stderr) =>
 				p.e err
+				p.e stderr
 				callback stdout
 		else
 			callback 'failed'
@@ -93,14 +93,14 @@ module.exports = {
 		fs.mkdirSync data.path
 		fs.writeFile data.path + '/Vagrantfile',body, (err)->
 			callback(err, data)
-	up: (v_file, callback)->
-		exec 'cd ' + v_file.path + ' && vagrant up', (err, stdout, stderr)->
-			if err
-				p.e err
-				callback '-1'
-			else if stderr
-				p.e stderr
-				callback '-1'
-			else 
-				callback '0'
+	up: (v_file, res)->
+		exec 'cd ' + v_file.path + ' && vagrant up', (err, stdout, stderr) =>
+			p.e err
+			p.p stdout
+			p.e stderr
+			if err or stderr
+				res.send '-1'
+			else
+				res.send '0'
+
 }
