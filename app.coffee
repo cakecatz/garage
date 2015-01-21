@@ -6,13 +6,15 @@ app = express()
 
 setting = garage.load_setting_file './setting.json'
 
+garage.init setting
+
 # for development
 p = console.log
 
 ## setup express
 app.use bodyParser.json()
-app.use bodyParser.urlencoded { 
-	extended: true 
+app.use bodyParser.urlencoded {
+	extended: true
 }
 app.set 'views', './public'
 app.set 'view engine', 'ejs'
@@ -45,7 +47,7 @@ app.get '/:id([0-9a-z]+)/destroy', (req, res)->
 		res.send result
 
 app.get '/vagrantfile/:uuid([0-9a-z\-]+)/:control([a-z]+)', (req, res)->
-	switch req.params.control 
+	switch req.params.control
 		when 'up'
 			v_file = garage.find req.params.uuid, setting
 			vagrant.up v_file, (result)->
@@ -60,7 +62,7 @@ app.post '/vagrantfile', (req, res)->
 		garage.new_vm setting, data
 		if err
 			res.send '-1'
-		else 
+		else
 			res.send '0'
 
 app.listen setting.port
