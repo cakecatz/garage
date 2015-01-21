@@ -1,5 +1,5 @@
 {
 	"name": "Garage",
 	"port": 3000,
-	"garage_dir": "/garage"
+	"garage_dir": "./vfile"
 }
