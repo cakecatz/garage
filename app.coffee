@@ -6,6 +6,8 @@ app = express()
 
 setting = garage.load_setting_file './setting.json'
 
+garage.init setting
+
 # for development
 p = console.log
 
