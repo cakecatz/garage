@@ -11,8 +11,8 @@ p = console.log
 
 ## setup express
 app.use bodyParser.json()
-app.use bodyParser.urlencoded { 
-	extended: true 
+app.use bodyParser.urlencoded {
+	extended: true
 }
 app.set 'views', './public'
 app.set 'view engine', 'ejs'
@@ -29,7 +29,7 @@ app.get '/', (req, res)->
 			garage_data: garage_data.vms
 		}
 
-app.get '/reload-vm', (req, res)->
+app.get '/refresh', (req, res)->
 	vagrant.status (vms)->
 		res.send JSON.stringify vms
 
@@ -45,13 +45,14 @@ app.get '/:id([0-9a-z]+)/destroy', (req, res)->
 		res.send result
 
 app.get '/vagrantfile/:uuid([0-9a-z\-]+)/:control([a-z]+)', (req, res)->
-	switch req.params.control 
+	v_file = garage.find req.params.uuid, setting
+	switch req.params.control
 		when 'up'
-			v_file = garage.find req.params.uuid, setting
 			vagrant.up v_file, (result)->
 				res.send result
 		when 'delete'
-			res.send '-3'
+			garage.deleteVfile v_file, (result)->
+				res.send result
 		else
 			res.send '-2'
 
@@ -60,7 +61,7 @@ app.post '/vagrantfile', (req, res)->
 		garage.new_vm setting, data
 		if err
 			res.send '-1'
-		else 
+		else
 			res.send '0'
 
 app.listen setting.port
