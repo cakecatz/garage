@@ -1,15 +1,4 @@
 (function(){
-	if ( garage.vms ) {
-		for (var n = 0; n < garage.vms.length; n++) {
-			var vm_id  = '#vm-' + garage.vms[n].id;
-			var elem = document.querySelector( vm_id );
-			elem.onclick = function() {
-				garage.selected_vm = garage.search(this.id.replace('vm-',''));
-				var detail_panel = document.querySelector('#vm-detail div div');
-				detail_panel.querySelector('.vm-detail-ID').innerText = garage.selected_vm.id;
-			}
-		}
-	}
 
 	$(function () {
 		$('[data-toggle="tooltip"]').tooltip();
@@ -49,7 +38,11 @@
 		  });
 		}
 	});
+
+	// init garage
 	if (garage.current_page === 'index') {
 		garage.startMonitoring();
+		garage._clickPanelEvent();
 	}
+
 })();

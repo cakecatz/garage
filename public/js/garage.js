@@ -15,6 +15,7 @@ garage = {
 	reload: function() {
 		garage.changeStatusbarText('Check and Update Lists');
 		garage._reloadInnerVmList( garage._updateVmListView );
+		garage._clickPanelEvent();
 	},
 	_updateVmListView: function() {
 		// TODO: use diff
@@ -45,6 +46,11 @@ garage = {
 			<button class="btn btn-inverse">Provision</button> <button class="btn btn-inverse">Reload</button> <button class="btn btn-inverse">Halt</button>\
 			</p><p><button class="btn btn-danger" data-toggle="modal" data-target="#destroy-modal">Destroy</button> </p></div></div>';
 		return body;
+	},
+	_clickPanelEvent: function() {
+		$('#machine-panels > .panel').mouseover(function(){
+			garage.selected_vm = garage.search(this.id.replace('vm-',''));
+		});
 	},
 	_vm_state_class: function(state) {
 		switch (state) {

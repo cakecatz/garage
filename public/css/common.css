@@ -11,7 +11,7 @@
 	background-color: #34495e;
 	height: 20px;
 	line-height: 20px;
-	position: absolute;
+	position: fixed;
 	padding:0 5px 0 0;
 	bottom: 0px;
 	font-size: 15px;
