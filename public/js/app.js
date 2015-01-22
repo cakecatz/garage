@@ -11,6 +11,10 @@
 		}
 	}
 
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+
 	$('.destroy-vm-btn').click(function(){
 		garage.destroy( garage.selected_vm.id );
 	});
@@ -45,5 +49,7 @@
 		  });
 		}
 	});
-	garage.startMonitoring();
+	if (garage.current_page === 'index') {
+		garage.startMonitoring();
+	}
 })();

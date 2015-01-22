@@ -1,6 +1,7 @@
 garage = {
 	selected_vm: {},
 	vms: {},
+	cuurent_page: 'index',
 	search: function(vm_id) {
 		if ( garage.vms ) {
 			for (var i = 0; i < garage.vms.length; i++) {
@@ -12,6 +13,7 @@ garage = {
 		return false;
 	},
 	reload: function() {
+		garage.changeStatusbarText('Check and Update Lists');
 		garage._reloadInnerVmList( garage._updateVmListView );
 	},
 	_updateVmListView: function() {
@@ -70,12 +72,12 @@ garage = {
 	},
 	destroy: function(vm_id) {
 		this._order("/" + vm_id + "/destroy", function(data){
+			garage.reload();
 			if (data === 'failed') {
 				garage._push_alert("failed X(", 'error');
 			} else {
 				garage._push_alert("Success :)");
 			}
-			garage.reload();
 		});
 	},
 	_push_alert: function(message, type) {
@@ -147,6 +149,7 @@ garage = {
 				$.get(path, function(data){
 					callback(data);
 					garage._stopProcess();
+					garage.clearStatusbarText();
 				});
 		}
 	},
@@ -169,6 +172,12 @@ garage = {
 	},
 	stopMonitoring: function() {
 		clearInterval( this._monitor );
+	},
+	changeStatusbarText: function(text) {
+		document.querySelector("#garage-status-bar-text").innerHTML = text;
+	},
+	clearStatusbarText: function(text) {
+		document.querySelector("#garage-status-bar-text").innerHTML = '';
 	},
 	_monitor: {}
 };

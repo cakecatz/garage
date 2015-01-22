@@ -1,11 +1,11 @@
 <% include header %>
-	
+
 	<% include nav %>
 
 	<div class="col-md-offset-3 col-md-6">
-		<h4>Create New VM</h4>
+		<h3>Create New VM</h3>
 		<div class="form-group">
-		  <label for="form-vm-name">Machine Name</label>
+		  <label for="form-vm-name"><h6>Machine Name</h6></label>
 		  <input class="form-control" placeholder="default" type="text" id="form-vm-name" />
 		</div>
 	  <select class="form-control select select-inverse select-block mbl">
@@ -23,15 +23,15 @@
 		</select>
 
 		<div class="form-group">
-			<label for="slider">Machine Memory Size</label>
+			<label for="slider"><h6>Machine Memory Size</h6></label>
 			<div id="slider"></div>
 			<input class="form-control" style="display:inline;width:100px;" value="512" type="text" id="form-vm-memory" /> MB
-		</div>
 
-
-		<div class="form-group">
-			<h6>Forwarded Port [VM_IP : HOST_IP]</h6>
-			<input name="tagsinput" class="tagsinput" data-role="tagsinput" value="80:8080" />
+			<h6><span data-toggle="tooltip" title="VM_IP : HOST_IP" data-placement="right">Forwarded Port</span></h6>
+			<input id="forwarded-port-form" class="tagsinput" data-role="tagsinput" value="80:8080" />
+			<h6><span data-toggle="tooltip" title="This script run when vagrant up" data-placement="right">Bootstrap.sh</span></h6>
+			<textarea class="form-control" rows="3" id="bootstrap-sh-form"
+				placeholder="sudo apt-get install apache2"></textarea>
 		</div>
 
 		<div style="text-align: right;">
@@ -44,5 +44,7 @@
 		</div>
 
 	</div>
+
+	<script>garage.current_page = 'new-vm'</script>
 
 <% include footer %>
