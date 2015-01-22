@@ -32,7 +32,7 @@ module.exports = {
 			vfile_list.vms.splice(target_index, 1)
 			this.update_garagefile this.garagefile_path(setting), vfile_list
 
-	new_vm: (setting, data)->
+	new_vfile: (setting, data)->
 		garage_status = this.status setting
 		garage_status.vms.push(data)
 		this.update_garagefile this.garagefile_path(setting), garage_status
@@ -42,6 +42,7 @@ module.exports = {
 		fs.writeFile path, body, (err)->
 			p.e err
 			p.p 'update garagefile'
+
 	find: (uuid, settings)->
 		garage_status = this.status settings
 		for v in garage_status.vms

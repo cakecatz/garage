@@ -9,7 +9,7 @@
 	});
 
 	$('#vagrantfile-save-btn').click(function(){
-		garage.new_vm();
+		garage.new_vfile();
 	});
 
 	$('.vagrant-up-btn').click(function(){

@@ -60,9 +60,9 @@ app.get '/vagrantfile/:uuid([0-9a-z\-]+)/:control([a-z]+)', (req, res)->
 		else
 			res.send '-2'
 
-app.post '/vagrantfile', (req, res)->
+app.post '/vagrantfile/new', (req, res)->
 	vagrant.new_vagrantfile req.body, setting, (err, data)->
-		garage.new_vm setting, data
+		garage.new_vfile setting, data
 		if err
 			res.send '-1'
 		else

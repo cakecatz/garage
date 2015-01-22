@@ -13,7 +13,12 @@ Vagrant.configure(2) do |config|
     vb.name = "<%= name %>"
   end
 
-  #config.vm.provision "shell", inline <<-SHELL
-  #  sudo apt-get install apache2
-  #SHELL
+
+  <% if (sh[0] !== '') { %>
+  $BOOTSTRAP = <<-SCRIPT<% for (var i=0;i<sh.length;i++) { %>
+    <%= sh[i] %><% } %>
+  SCRIPT
+
+  config.vm.provision "shell", inline: $BOOTSTRAP
+  <% } %>
 end

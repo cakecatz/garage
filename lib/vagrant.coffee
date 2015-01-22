@@ -89,10 +89,12 @@ module.exports = {
 		}
 		data.uuid = uuid.v4()
 		data.path = settings.garage_dir + '/' + data.uuid
+		data.sh = data.sh.split("\n")
 		body = ejs.render template, data
 		fs.mkdirSync data.path
 		fs.writeFile data.path + '/Vagrantfile',body, (err)->
 			callback(err, data)
+
 	up: (v_file, res)->
 		exec 'cd ' + v_file.path + ' && vagrant up', (err, stdout, stderr) =>
 			p.e err

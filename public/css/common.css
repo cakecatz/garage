@@ -7,6 +7,10 @@
   margin-bottom: 5px;
 }
 
+h3 {
+	margin-top: 0px;
+}
+
 #garage-status-bar {
 	background-color: #34495e;
 	height: 20px;

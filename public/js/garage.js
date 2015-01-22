@@ -1,7 +1,7 @@
 garage = {
 	selected_vm: {},
 	vms: {},
-	cuurent_page: 'index',
+	current_page: 'index',
 	search: function(vm_id) {
 		if ( garage.vms ) {
 			for (var i = 0; i < garage.vms.length; i++) {
@@ -78,7 +78,6 @@ garage = {
 	},
 	destroy: function(vm_id) {
 		this._order("/" + vm_id + "/destroy", function(data){
-			garage.reload();
 			if (data === 'failed') {
 				garage._push_alert("failed X(", 'error');
 			} else {
@@ -105,7 +104,9 @@ garage = {
 	},
 	_stopProcess: function() {
 		$("#loading-icon").addClass("stop-process");
-		this.startMonitoring();
+		if (garage.current_page === 'index') {
+			garage.startMonitoring();
+		}
 	},
 	_success_process: function() {
 		garage._push_alert("Success :)");
@@ -120,24 +121,25 @@ garage = {
 	},
 	delete_vfile: function(v_file) {
 		this._order('/vagrantfile/' + v_file.uuid + '/delete', function(data){
-			console.log(data);
 			garage.reload();
 		});
 	},
-	new_vm: function() {
+	new_vfile: function() {
 		garage._startProcess();
-		vagrantfile = {};
+		vfile = {};
 		var vm_name = $("#form-vm-name").val();
 		if (vm_name === "") vm_name = 'default';
-		vagrantfile.name = vm_name;
-		vagrantfile.box = $("#select2-chosen-2").text();
-		vagrantfile.memory = $("#form-vm-memory").val();
-		vagrantfile.ports = [];
+		vfile.name = vm_name;
+		vfile.box = $("#select2-chosen-2").text();
+		vfile.memory = $("#form-vm-memory").val();
+		vfile.ports = [];
 		$('.bootstrap-tagsinput span.tag').each(function(){
-			vagrantfile.ports.push( $(this).text() );
+			vfile.ports.push( $(this).text() );
 		});
 
-		$.post('/vagrantfile', vagrantfile, function(data) {
+		vfile.sh = $('#bootstrap-sh-form').val();
+
+		$.post('/vagrantfile/new', vfile, function(data) {
 			garage._stopProcess();
 			if ( data < 0 ) {
 				garage._failed_process();
