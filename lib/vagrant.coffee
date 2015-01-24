@@ -3,6 +3,7 @@ p = require 'prettyput'
 fs = require 'fs'
 ejs = require 'ejs'
 uuid = require 'node-uuid'
+path = require 'path'
 
 module.exports = {
 	vms: []
@@ -50,11 +51,13 @@ module.exports = {
 		return false
 
 	destroy: (vm_id, callback)->
+		p.p vm_id
 		target = this.vm_search vm_id
 		if target
 			exec 'vagrant destroy -f ' + target.id, (err, stdout, stderr) =>
 				p.e err
 				p.e stderr
+				p.p stdout
 				callback stdout
 		else
 			callback 'failed'
@@ -96,7 +99,8 @@ module.exports = {
 			callback(err, data)
 
 	up: (v_file, res)->
-		exec 'cd ' + v_file.path + ' && vagrant up', (err, stdout, stderr) =>
+		vfile_dir = this._getProjectRoot() + v_file.path.replace('.','')
+		exec 'VAGRANT_CWD=' + vfile_dir + ' vagrant up', (err, stdout, stderr) =>
 			p.e err
 			p.p stdout
 			p.e stderr
@@ -104,5 +108,6 @@ module.exports = {
 				res.send '-1'
 			else
 				res.send '0'
-
+	_getProjectRoot: ()->
+		return path.dirname require.main.filename
 }
