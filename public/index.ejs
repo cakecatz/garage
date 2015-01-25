@@ -31,12 +31,13 @@
 		<% } %>
 		</div>
 		<h6 style="text-align: center;">Vagrantfile List</h6>
+		<div id="vfile-panels">
 		<% for (var i =0;i < vfile.length;i++) { %>
 			<div class="panel panel-default panel-mouseover" id="vagrantfile-panels">
 				<div class="panel-body machine-detail">
 					<p>Name : <%= vfile[i].name %></p>
 					<p>Box : <%= vfile[i].box %></p>
-					<p>memory : <%= vfile[i].memory %> MB</p>
+					<p>Memory : <%= vfile[i].memory %> MB</p>
 					<p>
 						<button class="btn btn-inverse vagrant-up-btn" data-select-index="<%= i %>">Vagrant up</button>
 						<button class="btn btn-default delete-vfile-btn" data-select-index="<%= i %>">Delete</button>
@@ -51,6 +52,7 @@
 				</div>
 			</div>
 		<% } %>
+		</div>
 	</div>
 
 	<script>

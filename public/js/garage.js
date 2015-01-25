@@ -14,7 +14,10 @@ garage = {
 	},
 	reload: function() {
 		garage.changeStatusbarText('Check and Update Lists');
-		garage._reloadInnerVmList( garage._updateVmListView );
+		garage._reloadInnerVmList( function() {
+			garage._updateVmListView();
+			garage._reloadVfileList();
+		});
 		garage._clickPanelEvent();
 	},
 	_updateVmListView: function() {
@@ -26,7 +29,7 @@ garage = {
 		if (body === '') {
 			body = '<div class="panel panel-default"><div class="panel-body">No Virtual Machines</div></div>';
 		}
-		garage._panel_rewrite(body);
+		garage._vmPanelRewrite(body);
 	},
 	_reloadInnerVmList: function(callback) {
 		this._order('/refresh', function(data){
@@ -36,8 +39,22 @@ garage = {
 			callback();
 		}
 	},
+	_reloadVfileList: function() {
+		var body = '';
+		for(var i=0;i < garage.vfiles.length;i++) {
+			body += '<div class="panel panel-default panel-mouseover" id="vagrantfile-panels"><div class="panel-body machine-detail">\
+				<p>Name : ' + garage.vfiles[i].name + '</p><p>Box : ' + garage.vfiles[i].box + '</p><p>Memory : ' + garage.vfiles[i].memory + ' MB</p>\
+				<p><button class="btn btn-inverse vagrant-up-btn" data-select-index="' + i + '">Vagrant up</button>\
+				<button class="btn btn-default delete-vfile-btn" data-select-index="' + i + '">Delete</button></p></div></div>';
+
+		}
+		if (body === '') {
+			body = '<div class="panel panel-default"><div class="panel-body">No Vagrantfiles</div></div>';
+		}
+		garage._vfilePanelRewrite(body);
+	},
 	_updateGarageData: function(data) {
-		garage.vfile = data.vfile;
+		garage.vfiles = data.vfile;
 		garage.vms = garage._convertVmArr(data.vms);
 	},
 	create_machine_panel: function(vm_info) {
@@ -60,9 +77,14 @@ garage = {
 				return 'default';
 		}
 	},
-	_panel_rewrite: function(body) {
+	_vmPanelRewrite: function(body) {
 		var body = typeof body !== 'undefined' ? body : '';
 		var selector = '#machine-panels';
+		$(selector).html(body);
+	},
+	_vfilePanelRewrite: function(body) {
+		var body = typeof body !== 'undefined' ? body : '';
+		var selector = '#vfile-panels';
 		$(selector).html(body);
 	},
 	_remove_vmdata: function(vm_id) {
