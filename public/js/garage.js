@@ -170,14 +170,15 @@ garage = {
 			}
 		});
 	},
-	_order: function(path, callback, post_data) {
+	_order: function(url, callback, post_data) {
 		garage._startProcess();
-		switch (path) {
+		switch (url) {
 			case 'aa':
 				console.log(11);
 			default:
-				$.get(path, function(data){
-					callback(data);
+				$.get(url,function(data){
+						callback(data);
+				}).always(function(){
 					garage._stopProcess();
 					garage.clearStatusbarText();
 				});
