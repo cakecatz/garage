@@ -44,17 +44,10 @@ module.exports = {
 				fix_arr.push v
 		return fix_arr
 
-	vm_search: (vm_id)->
-		this.init()
-		for v in this.vms
-			if v.id is vm_id
-				return v
-		return false
-
 	destroy: (vm_id, callback)->
-		target = this.vm_search vm_id
-		if target
-			exec 'vagrant destroy -f ' + target.id, (err, stdout, stderr) =>
+		p.p vm_id
+		if vm_id
+			exec 'vagrant destroy -f ' + vm_id, (err, stdout, stderr) =>
 				p.e err
 				p.e stderr
 				p.p stdout

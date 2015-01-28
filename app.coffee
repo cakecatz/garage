@@ -68,4 +68,6 @@ app.post '/vagrantfile/new', (req, res)->
 		else
 			res.send '0'
 
+p 'localhost:' + setting.port
+
 app.listen setting.port
