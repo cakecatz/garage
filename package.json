@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.coffee",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "npm install && cd ./public/ && bower install",
     "start": "coffee app.coffee"
   },
   "author": "Ryo Narita",
