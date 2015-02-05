@@ -1,7 +1,9 @@
-fs = require 'fs'
-p = require 'prettyput'
-exec = require('child_process').exec
-path = require 'path'
+fs		= require 'fs'
+p			= require 'prettyput'
+exec	= require('child_process').exec
+path	= require 'path'
+uuid	= require 'node-uuid'
+ejs		= require 'ejs'
 
 module.exports = {
 	init: (settings)->
@@ -10,15 +12,15 @@ module.exports = {
 			fs.mkdirSync(settings.garage_dir)
 
 	status: (settings)->
-		garagefile_path = this.garagefile_path settings
-		if !fs.existsSync(garagefile_path)
-			fs.writeFileSync garagefile_path ,'{"vms":[]}'
-		garagefile = fs.readFileSync garagefile_path, {
+		garageFilePath = this.garageFilePath settings
+		if !fs.existsSync(garageFilePath)
+			fs.writeFileSync garageFilePath ,'{"vms":[]}'
+		garagefile = fs.readFileSync garageFilePath, {
 			encoding: "UTF-8"
 		}
 		return JSON.parse garagefile
 
-	garagefile_path: (settings)->
+	garageFilePath: (settings)->
 		settings.garage_dir + '/garagefile.json'
 
 	removeFromGaragefile: (uuid)->
@@ -30,14 +32,14 @@ module.exports = {
 				target_index = i
 		if target_index != undefined
 			vfile_list.vms.splice(target_index, 1)
-			this.update_garagefile this.garagefile_path(setting), vfile_list
+			this.updateGarageFile this.garageFilePath(setting), vfile_list
 
-	new_vfile: (setting, data)->
-		garage_status = this.status setting
-		garage_status.vms.push(data)
-		this.update_garagefile this.garagefile_path(setting), garage_status
+	addMachine2GarageFile: (setting, data)->
+		garageStatus = this.status setting
+		garageStatus.vms.push(data)
+		this.updateGarageFile this.garageFilePath(setting), garageStatus
 
-	update_garagefile: (path, data)->
+	updateGarageFile: (path, data)->
 		body = JSON.stringify data
 		fs.writeFile path, body, (err)->
 			p.e err
@@ -54,6 +56,7 @@ module.exports = {
 			encoding: "UTF-8"
 		}
 		return JSON.parse file_body
+
 	deleteVfile: (vfile, res)->
 		exec 'rm -rf ' + this._rel2abs(vfile.path) ,(err, stdout, stderr) =>
 			p.e err
@@ -66,5 +69,17 @@ module.exports = {
 
 	_getProjectRoot: ()->
 		return path.dirname require.main.filename
+
+	newVagrantFile: (data, settings, callback)->
+		template = fs.readFileSync './template/default_vagrantfile.ejs', {
+			encoding: "UTF-8"
+		}
+		data.uuid = uuid.v4()
+		data.path = settings.garage_dir + '/' + data.uuid
+		data.sh = data.sh.split("\n")
+		body = ejs.render template, data
+		fs.mkdirSync data.path
+		fs.writeFile data.path + '/Vagrantfile',body, (err)->
+			callback(err, data)
 
 }

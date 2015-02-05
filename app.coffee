@@ -1,5 +1,5 @@
 express = require 'express'
-vagrant = require './lib/vagrant'
+vagrant = require 'vagrant.js'
 garage = require './lib/garage'
 bodyParser = require 'body-parser'
 app = express()
@@ -20,14 +20,13 @@ app.set 'views', './public'
 app.set 'view engine', 'ejs'
 app.use express.static (__dirname + '/public')
 
-vagrant.init setting
-
 app.get '/', (req, res)->
-	vagrant.status (vms)->
+	vagrant.status (statusArr)->
+		p statusArr
 		vfile = garage.status setting
 		res.render 'index', {
 			title: setting.name
-			vm: vms
+			vm: statusArr
 			vfile: vfile.vms
 		}
 
@@ -40,10 +39,10 @@ app.get '/refresh', (req, res)->
 		}
 
 app.get '/new', (req, res)->
-	vagrant.box_list (box_list)->
+	vagrant.boxList (boxList)->
 		res.render 'new', {
 				title: setting.name
-				boxes: box_list
+				boxes: boxList
 			}
 
 app.get '/:id([0-9a-z]+)/destroy', (req, res)->
@@ -61,8 +60,8 @@ app.get '/vagrantfile/:uuid([0-9a-z\-]+)/:control([a-z]+)', (req, res)->
 			res.send '-2'
 
 app.post '/vagrantfile/new', (req, res)->
-	vagrant.new_vagrantfile req.body, setting, (err, data)->
-		garage.new_vfile setting, data
+	garage.newVagrantFile req.body, setting, (err, data)->
+		garage.addMachine2GarageFile setting, data
 		if err
 			res.send '-1'
 		else

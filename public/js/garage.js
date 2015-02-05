@@ -55,11 +55,11 @@ garage = {
 	},
 	_updateGarageData: function(data) {
 		garage.vfiles = data.vfile;
-		garage.vms = garage._convertVmArr(data.vms);
+		garage.vms = data.vms;
 	},
-	create_machine_panel: function(vm_info) {
-		var body = '<div class="panel panel-' + this._vm_state_class(vm_info.state) + ' panel-mouseover" id="vm-'+vm_info.id+'"><div class="panel-heading">\
-			<h3 class="panel-title">' + vm_info.name + ' [ ' + vm_info.id + ' ] ' + vm_info.state + '</h3></div><div class="panel-body"><p>\
+	create_machine_panel: function(machineInfo) {
+		var body = '<div class="panel panel-' + this._vm_state_class(machineInfo.state) + ' panel-mouseover" id="vm-'+machineInfo.id+'"><div class="panel-heading">\
+			<h3 class="panel-title">' + machineInfo.name + ' [ ' + machineInfo.id + ' ] ' + machineInfo.state + '</h3></div><div class="panel-body"><p>\
 			<button class="btn btn-inverse">Provision</button> <button class="btn btn-inverse">Reload</button> <button class="btn btn-inverse">Halt</button>\
 			</p><p><button class="btn btn-danger" data-toggle="modal" data-target="#destroy-modal">Destroy</button> </p></div></div>';
 		return body;
