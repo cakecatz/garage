@@ -6,9 +6,9 @@
 		<h6 style="text-align: center;">VirtualMachine List</h6>
 		<div id="machine-panels">
 		<% for (var i = 0;i < vm.length;i++){ %>
-			<div class="panel panel-<% if (vm[i][3]==='running') { %><%= 'success' %><%} else {%><%= 'default' %><%} %> panel-mouseover" id="vm-<%= vm[i][0] %>">
+			<div class="panel panel-<% if (vm[i].state==='running') { %><%= 'success' %><%} else {%><%= 'default' %><%} %> panel-mouseover" id="vm-<%= vm[i].id %>">
 				<div class="panel-heading">
-			    <h3 class="panel-title"><%= vm[i][1] %> [ <%= vm[i][0] %> ] <%= vm[i][3] %></h3>
+			    <h3 class="panel-title"><%= vm[i].name %> [ <%= vm[i].id %> ] <%= vm[i].state %></h3>
 			  </div>
 		  	<div class="panel-body">
 		  		<p>
@@ -59,11 +59,11 @@
 	garage.vms = [
 		<% for (var i = 0;i < vm.length;i++){ %>
 		{
-			id:"<%= vm[i][0] %>",
-			name:"<%= vm[i][1] %>",
-			provider:"<%= vm[i][2] %>",
-			state:"<%= vm[i][3] %>",
-			directory:"<%= vm[i][4] %>"
+			id:"<%= vm[i].id %>",
+			name:"<%= vm[i].name %>",
+			provider:"<%= vm[i].provider %>",
+			state:"<%= vm[i].state %>",
+			directory:"<%= vm[i].directory %>"
 		},
 		<% } %>
 	];

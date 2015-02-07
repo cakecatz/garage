@@ -1,8 +1,9 @@
 express = require 'express'
-vagrant = require './lib/vagrant'
+vagrant = require 'vagrant.js'
 garage = require './lib/garage'
 bodyParser = require 'body-parser'
 app = express()
+path  = require 'path'
 
 setting = garage.load_setting_file './setting.json'
 
@@ -20,30 +21,28 @@ app.set 'views', './public'
 app.set 'view engine', 'ejs'
 app.use express.static (__dirname + '/public')
 
-vagrant.init setting
-
 app.get '/', (req, res)->
-	vagrant.status (vms)->
+	vagrant.status (statusArr)->
 		vfile = garage.status setting
 		res.render 'index', {
 			title: setting.name
-			vm: vms
+			vm: statusArr
 			vfile: vfile.vms
 		}
 
 app.get '/refresh', (req, res)->
-	vagrant.status (vms)->
+	vagrant.status (statusArr)->
 		vfile = garage.status setting
 		res.send JSON.stringify {
-			vms: vms
+			vms: statusArr
 			vfile: vfile.vms
 		}
 
 app.get '/new', (req, res)->
-	vagrant.box_list (box_list)->
+	vagrant.boxList (boxList)->
 		res.render 'new', {
 				title: setting.name
-				boxes: box_list
+				boxes: boxList
 			}
 
 app.get '/:id([0-9a-z]+)/destroy', (req, res)->
@@ -51,18 +50,20 @@ app.get '/:id([0-9a-z]+)/destroy', (req, res)->
 		res.send result
 
 app.get '/vagrantfile/:uuid([0-9a-z\-]+)/:control([a-z]+)', (req, res)->
-	v_file = garage.find req.params.uuid, setting
+	vagrantFilePath = path.join __dirname, setting.garageFilePath, req.params.uuid
 	switch req.params.control
 		when 'up'
-			vagrant.up v_file, res
+			vagrant.up vagrantFilePath, (stdout, stderr)->
+				res.send '0'
 		when 'delete'
-			garage.deleteVfile v_file, res
+			garage.deleteVfile vagrantFilePath, req.params.uuid, (result)->
+				res.send result
 		else
 			res.send '-2'
 
 app.post '/vagrantfile/new', (req, res)->
-	vagrant.new_vagrantfile req.body, setting, (err, data)->
-		garage.new_vfile setting, data
+	garage.newVagrantFile req.body, setting, (err, data)->
+		garage.addMachine2GarageFile setting, data
 		if err
 			res.send '-1'
 		else
