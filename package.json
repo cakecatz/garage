@@ -14,7 +14,7 @@
     "ejs": "^2.1.4",
     "express": "^4.11.0",
     "node-uuid": "^1.4.2",
-    "vagrant.js": "0.0.3"
+    "vagrant.js": "0.0.4"
   },
   "devDependencies": {
     "prettyput": "0.0.3"

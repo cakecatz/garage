@@ -8,8 +8,8 @@ ejs		= require 'ejs'
 module.exports = {
 	init: (settings)->
 		# TODO: I think should not make direcotry here
-		if !fs.existsSync(settings.garage_dir)
-			fs.mkdirSync(settings.garage_dir)
+		if !fs.existsSync(settings.garageFilePath)
+			fs.mkdirSync(settings.garageFilePath)
 
 	status: (settings)->
 		garageFilePath = this.garageFilePath settings
@@ -21,7 +21,7 @@ module.exports = {
 		return JSON.parse garagefile
 
 	garageFilePath: (settings)->
-		settings.garage_dir + '/garagefile.json'
+		settings.garageFilePath + '/garagefile.json'
 
 	removeFromGaragefile: (uuid)->
 		setting = this.load_setting_file this._getProjectRoot() + '/setting.json'
@@ -57,15 +57,12 @@ module.exports = {
 		}
 		return JSON.parse file_body
 
-	deleteVfile: (vfile, res)->
-		exec 'rm -rf ' + this._rel2abs(vfile.path) ,(err, stdout, stderr) =>
+	deleteVfile: (vagrantFilePath, uuid, callback)->
+		exec 'rm -rf ' + vagrantFilePath ,(err, stdout, stderr) =>
 			p.e err
 			p.p stdout
-			this.removeFromGaragefile vfile.uuid
-			res.send 'ok'
-
-	_rel2abs: (path)->
-		return this._getProjectRoot() + path.replace('.','')
+			this.removeFromGaragefile uuid
+			callback '0'
 
 	_getProjectRoot: ()->
 		return path.dirname require.main.filename
@@ -75,7 +72,7 @@ module.exports = {
 			encoding: "UTF-8"
 		}
 		data.uuid = uuid.v4()
-		data.path = settings.garage_dir + '/' + data.uuid
+		data.path = settings.garageFilePath + '/' + data.uuid
 		data.sh = data.sh.split("\n")
 		body = ejs.render template, data
 		fs.mkdirSync data.path
