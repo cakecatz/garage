@@ -84,11 +84,11 @@ window.garage = {
 	destroy: (vm_id)->
 		garage._order "/" + vm_id + "/destroy", (data)->
 			if data == 'failed'
-				garage._push_alert "failed X(", 'error'
+				garage._pushAlert "failed X(", 'error'
 			else
-				garage._push_alert "Success :)"
+				garage._pushAlert "Success :)"
 
-	_push_alert: (message, type)->
+	_pushAlert: (message, type)->
 		type = type || 'success'
 		n = noty {
 			text: message,
@@ -111,21 +111,21 @@ window.garage = {
 		if garage.current_page == 'index'
 			garage.startMonitoring()
 
-	_success_process: ->
-		garage._push_alert "Success :)"
+	_successProcess: ->
+		garage._pushAlert "Success :)"
 
-	_failed_process: ->
-		garage._push_alert "failed X(", 'error'
+	_failedProcess: ->
+		garage._pushAlert "failed X(", 'error'
 
 	up: (v_file)->
 		garage._order '/vagrantfile/' + v_file.uuid + '/up', (data)->
 			garage.reload()
 
-	delete_vfile: (v_file)->
-		garage._order '/vagrantfile/' + v_file.uuid + '/delete', (data)->
+	deleteVfile: (vagrantFile)->
+		garage._order '/vagrantfile/' + vagrantFile.uuid + '/delete', (data)->
 			garage.reload()
 
-	new_vfile: ->
+	newVfile: ->
 		garage._startProcess()
 		vfile = {}
 		vfile.name = $("#form-vm-name").val() || 'default'
@@ -140,9 +140,9 @@ window.garage = {
 		$.post '/vagrantfile/new', vfile, (data)->
 			garage._stopProcess()
 			if data < 0
-				garage._failed_process()
+				garage._failedProcess()
 			else
-				garage._success_process()
+				garage._successProcess()
 
 	_order: (url, callback, post_data)->
 		garage._startProcess()
