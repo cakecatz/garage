@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.coffee",
   "scripts": {
+    "compile": "coffee -o ./public/js/ -c ./src/client/",
     "setup": "npm install && cd ./public/ && bower install",
     "start": "coffee app.coffee"
   },
