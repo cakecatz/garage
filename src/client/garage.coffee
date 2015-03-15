@@ -15,6 +15,7 @@ window.garage = {
 		garage._reloadInnerVmList ->
 			garage._updateVmListView()
 			garage._reloadVfileList()
+
 		garage._clickPanelEvent()
 
 	_updateVmListView: ->
@@ -23,7 +24,8 @@ window.garage = {
 		for i in [0...garage.vms.length]
 			body += garage.create_machine_panel garage.vms[i]
 		if body == ''
-			body = '<div class="panel panel-default"><div class="panel-body">No Virtual Machines</div></div>'
+			body = @tag 'div', { class: 'panel panel-default' },
+						   @tag 'div', { class: 'panel-body' }, 'No Virtual Machines'
 		garage._vmPanelRewrite body
 
 	_reloadInnerVmList: (callback)->
@@ -32,14 +34,17 @@ window.garage = {
 		if callback then callback()
 
 	_reloadVfileList: ()->
-		body = ''
 		for i in [0...garage.vfiles.length]
-			body += '<div class="panel panel-default panel-mouseover" id="vagrantfile-panels"><div class="panel-body machine-detail">'
-			+ '<p>Name : ' + garage.vfiles[i].name + '</p><p>Box : ' + garage.vfiles[i].box + '</p><p>Memory : ' + garage.vfiles[i].memory + ' MB</p>'
-			+ '<p><button class="btn btn-inverse vagrant-up-btn" data-select-index="' + i + '">Vagrant up</button>'
-			+ '<button class="btn btn-default delete-vfile-btn" data-select-index="' + i + '">Delete</button></p></div></div>'
+			body = @tag 'div', { class: 'panel panel-default panel-mouseover', id: "vagrantfile-panels"},
+				@tag 'div', { class: 'panel-body machine-detail' },
+				@tag('p', {}, 'Name : ' + garage.vfiles[i].name ) +
+				@tag('p', {}, 'Box : ' + garage.vfiles[i].box ) +
+				@tag('p', {}, 'Memory : ' + garage.vfiles[i].memory + ' MB' ) +
+				@tag('p', {},
+				@tag('button', { class:'btn btn-inverse vagrant-up-btn', 'data-select-index': i }, 'Vagrant up') + ' ' +
+				@tag('button', { class:'btn btn-default delete-vfile-btn', 'data-select-index': i }, 'Delete'))
 
-		if body == ''
+		if body == null
 			body = '<div class="panel panel-default"><div class="panel-body">No Vagrantfiles</div></div>'
 		garage._vfilePanelRewrite body
 
@@ -125,7 +130,7 @@ window.garage = {
 		garage._order '/vagrantfile/' + vagrantFile.uuid + '/delete', (data)->
 			garage.reload()
 
-	newVfile: ->
+	newVagrantFile: ->
 		garage._startProcess()
 		vfile = {}
 		vfile.name = $("#form-vm-name").val() || 'default'
@@ -179,6 +184,15 @@ window.garage = {
 
 	clearStatusbarText: (text)->
 		document.querySelector("#garage-status-bar-text").innerHTML = ''
+
+	tag: (name, attr, inner)->
+	  inner = inner || ''
+	  elem = '<' + name + ' '
+	  if attr != null
+	    for key of attr
+	      elem += key + '="' + attr[key] + '" '
+	  elem += '>' + inner + '</' + name + '>'
+	  return elem
 
 	_monitor: {}
 }

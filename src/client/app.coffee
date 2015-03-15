@@ -22,7 +22,7 @@ $(document).ready ->
   	garage.destroy garage.selected_vm.id
 
   $('#vagrantfile-save-btn').click ->
-  	garage.new_vfile()
+  	garage.newVagrantFile()
 
   $('.vagrant-up-btn').click ->
   	garage.up garage.vfiles[ this.dataset.selectIndex ]

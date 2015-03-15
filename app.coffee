@@ -1,9 +1,13 @@
-express = require 'express'
+express = require('express')
+app = express()
 vagrant = require 'vagrant.js'
 garage = require './lib/garage'
 bodyParser = require 'body-parser'
-app = express()
 path  = require 'path'
+
+server = require('http').createServer(app)
+
+io = require('socket.io')(server)
 
 setting = garage.load_setting_file './setting.json'
 
@@ -54,6 +58,7 @@ app.get '/vagrantfile/:uuid([0-9a-z\-]+)/:control([a-z]+)', (req, res)->
 	switch req.params.control
 		when 'up'
 			vagrant.up vagrantFilePath, (stdout, stderr)->
+				p stdout
 				res.send '0'
 		when 'delete'
 			garage.deleteVfile vagrantFilePath, req.params.uuid, (result)->
@@ -71,4 +76,5 @@ app.post '/vagrantfile/new', (req, res)->
 
 p 'localhost:' + setting.port
 
-app.listen setting.port
+#app.listen setting.port
+server.listen setting.port
