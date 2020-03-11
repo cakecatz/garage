@@ -1,6 +1,7 @@
 # Garage
 
 Create virtual machine and managing them on browser.
+[![Run on Repl.it](https://repl.it/badge/github/cakecatz/garage)](https://repl.it/github/cakecatz/garage)
 
 ## Installation
 
